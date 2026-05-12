@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Optional: global defaults */
+html, body {
+  height: 100%;
+}
+
+/* Optional: smooth theme transition */
+html {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Optional: remove default margins */
+body {
+  margin: 0;
+  padding-top: 54px;
+}
