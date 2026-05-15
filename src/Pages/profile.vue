@@ -35,7 +35,7 @@ function logout() { signOut(); router.push('/login') }
 <template>
   <main v-if="user" class="profile">
     <section class="hero">
-      <div class="hero-bg" />
+      <div class="hero-stripe" />
       <div class="hero-content container-x">
         <div class="avatar-xl">{{ user.avatar }}</div>
         <div>
@@ -106,7 +106,7 @@ function logout() { signOut(); router.push('/login') }
             v-for="t in recentSaved"
             :key="t.id"
             class="mini-card"
-            :style="{ background: `linear-gradient(135deg, ${t.gradient[0]}, ${t.gradient[1]}, ${t.gradient[2]})` }"
+            :style="{ background: t.color }"
             @click="router.push({ name: 'TitleDetail', params: { id: t.id } })"
           >
             <div class="mini-glyph">{{ t.glyph }}</div>
@@ -127,100 +127,104 @@ function logout() { signOut(); router.push('/login') }
 
 <style scoped>
 .profile { padding-bottom: 80px; }
+
 .hero { position: relative; padding: 130px 0 50px; overflow: hidden; }
-.hero-bg {
-  position: absolute; inset: 0; z-index: -1;
-  background: radial-gradient(700px 400px at 20% 30%, rgba(255,78,205,0.25), transparent 60%),
-              radial-gradient(700px 400px at 80% 40%, rgba(62,224,255,0.18), transparent 60%);
+.hero-stripe {
+  position: absolute; left: 0; right: 0; bottom: 0; top: 0;
+  background: var(--surface);
+  clip-path: polygon(0 40%, 100% 60%, 100% 100%, 0 100%);
 }
-.hero-content { display: flex; gap: 28px; align-items: center; }
+.hero-content { position: relative; display: flex; gap: 28px; align-items: center; }
+
 .avatar-xl {
   width: 110px; height: 110px;
-  background: var(--aurora);
-  color: #0a0a14;
-  border-radius: 22px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 16px;
   display: grid; place-items: center;
   font-size: 3.5rem; font-weight: 900;
-  box-shadow: 0 20px 60px rgba(122,92,255,0.4);
+  box-shadow: 0 8px 32px rgba(91, 91, 214, 0.35);
 }
 .kicker {
   font-size: 0.78rem; letter-spacing: 0.32em; font-weight: 700;
-  background: var(--aurora);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  color: var(--accent);
 }
 .hero h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 6px 0 2px; font-weight: 900; }
 .email { color: var(--muted); margin: 0 0 12px; }
 .quick { display: flex; gap: 8px; flex-wrap: wrap; }
 .pill {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
   padding: 4px 12px;
-  border-radius: 999px;
+  border-radius: 6px;
   font-size: 0.82rem;
 }
 
 .grid-cols {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
   margin-top: 30px;
 }
 .card {
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 24px;
 }
 .card.full { grid-column: 1 / -1; }
-.card.danger { border-color: rgba(255,80,80,0.25); }
-.card h2 { margin: 0 0 14px; font-size: 1.15rem; font-weight: 800; }
-.card-head { display: flex; justify-content: space-between; align-items: center; }
+.card.danger { border-color: rgba(229, 77, 46, 0.3); }
+.card h2 { margin: 0 0 14px; font-size: 1.1rem; font-weight: 800; }
+.card-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.card-head h2 { margin: 0; }
 .kv { display: flex; flex-direction: column; gap: 10px; }
-.kv > div { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+.kv > div {
+  display: flex; justify-content: space-between;
+  border-bottom: 1px solid var(--border); padding-bottom: 10px;
+}
 .kv span { color: var(--muted); }
 .avatar-inline { font-size: 1.4rem; }
 
 .form { display: flex; flex-direction: column; gap: 12px; }
 .form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
 .form input {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--bg);
+  border: 1px solid var(--border);
   color: #fff;
   padding: 10px 12px;
   border-radius: 8px;
   font-size: 0.95rem;
+  outline: none;
 }
+.form input:focus { border-color: var(--accent); }
 .avatar-pick { display: flex; gap: 8px; flex-wrap: wrap; }
 .ap {
   width: 44px; height: 44px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
   font-size: 1.3rem; color: #fff;
 }
-.ap.on { background: var(--aurora); color: #0a0a14; border: none; }
+.ap.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-.sub-note { color: var(--muted); margin: 0 0 14px; }
+.sub-note { color: var(--muted); margin: 0 0 14px; font-size: 0.9rem; }
 .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .plan {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--bg);
+  border: 1px solid var(--border);
   text-align: left;
   padding: 14px;
-  border-radius: 12px;
+  border-radius: 10px;
   color: #fff;
+  transition: border-color 0.15s;
 }
-.plan.on {
-  border-color: transparent;
-  background: linear-gradient(180deg, rgba(255,78,205,0.18), rgba(62,224,255,0.12));
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset;
-}
+.plan.on { border-color: var(--accent); background: rgba(91, 91, 214, 0.1); }
 .plan-name { font-weight: 800; }
 .plan-tag { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
 
 .mini-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .mini-card {
   aspect-ratio: 16 / 9;
-  border-radius: 12px;
+  border-radius: 10px;
   border: none;
   position: relative;
   overflow: hidden;
@@ -230,15 +234,13 @@ function logout() { signOut(); router.push('/login') }
   cursor: pointer;
 }
 .mini-glyph {
-  position: absolute; top: 6px; right: 12px;
-  font-size: 2.2rem; font-weight: 900; opacity: 0.6;
+  position: absolute; top: 6px; right: 10px;
+  font-size: 2.2rem; font-weight: 900; opacity: 0.2;
 }
 .mini-name {
   position: absolute; bottom: 10px; left: 12px; right: 12px;
-  font-weight: 800;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+  font-weight: 800; font-size: 0.85rem;
 }
-
 .muted { color: var(--muted); }
 
 @media (max-width: 820px) {

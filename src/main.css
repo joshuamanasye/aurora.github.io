@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #07070d;
-  --bg-soft: #0f0f1a;
-  --panel: #14142200;
-  --text: #ececf5;
-  --muted: #8a8aa3;
-  --accent-a: #ff4ecd;
-  --accent-b: #7a5cff;
-  --accent-c: #3ee0ff;
-  --aurora: linear-gradient(120deg, #ff4ecd 0%, #7a5cff 50%, #3ee0ff 100%);
+  --bg: #0D0D12;
+  --bg-soft: #13131A;
+  --surface: #1A1A24;
+  --border: rgba(255, 255, 255, 0.07);
+  --text: #ECECF5;
+  --muted: #8A8AA3;
+  --accent: #5B5BD6;
+  --accent-hover: #4E4EC4;
+  --accent-text: #ffffff;
+  --positive: #23A55A;
+  --danger: #E54D2E;
 }
 
 * { box-sizing: border-box; }
@@ -28,49 +30,38 @@ html, body {
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; cursor: pointer; }
 
-/* Aurora ambient background */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background:
-    radial-gradient(800px 500px at 10% -10%, rgba(255,78,205,0.18), transparent 60%),
-    radial-gradient(900px 600px at 90% 10%, rgba(62,224,255,0.14), transparent 60%),
-    radial-gradient(700px 500px at 50% 110%, rgba(122,92,255,0.16), transparent 60%);
-  pointer-events: none;
-}
-
 /* Scrollbar */
 ::-webkit-scrollbar { height: 10px; width: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
 
 .btn {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   padding: 10px 20px;
-  border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.12);
-  background: rgba(255,255,255,0.06);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
   color: var(--text);
   font-weight: 600;
-  transition: transform 0.15s ease, background 0.2s ease, border 0.2s ease;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
-.btn:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+.btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
 .btn-primary {
-  background: var(--aurora);
-  border: none;
-  color: #0a0a14;
-  font-weight: 800;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-text);
 }
-.btn-primary:hover { filter: brightness(1.08); }
+.btn-primary:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
 
 .container-x { max-width: 1400px; margin: 0 auto; padding: 0 24px; }
 
-.aurora-text {
-  background: var(--aurora);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.accent-text { color: var(--accent); }

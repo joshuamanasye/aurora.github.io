@@ -16,6 +16,6 @@ export interface Title {
   trending: boolean
   newArrival: boolean
   topTen: boolean
-  gradient: [string, string, string] // 3-stop gradient for the poster
-  glyph: string // single letter/symbol shown on the gradient card
+  color: string // flat poster background color
+  glyph: string // single letter/symbol shown on the card
 }
