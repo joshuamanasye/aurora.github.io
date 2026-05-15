@@ -1,41 +1,46 @@
-# sesi6
+# AURORA — Stream Beyond
 
-This template should help get you started developing with Vue 3 in Vite.
+A Netflix-inspired streaming UI built with **Vue 3 + Vite + TypeScript** for a Multimedia class case project. Same UX rhythm as Netflix (hero, content rows, detail, my list, search), but a distinct visual identity — dark base with an aurora gradient (fuchsia → violet → cyan) and gradient "poster cards" rendered in pure CSS instead of stock imagery.
 
-## Recommended IDE Setup
+## Features
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Auto-rotating hero banner** with featured Aurora Originals
+- **Horizontally-scrolling content rows** — Trending, Top 10 (with the giant outlined rank numbers), New & Noteworthy, Films, Series
+- **Title detail pages** with synopsis, cast, episodes (for series), and "More Like This" recommendations
+- **My List** — persists to `localStorage`
+- **Search** with live filtering across name, genre, cast, synopsis
+- **Browse / Movies / Series / New & Popular** with genre chips and sort
+- **Login / Sign-up** flow with animated aurora blobs background
+- **Profile** page with avatar picker, plan switcher, and recently-saved row
+- **Responsive** down to mobile widths
 
-## Recommended Browser Setup
+## Stack
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- Vue 3 (`<script setup>` + TypeScript)
+- Vue Router
+- Vite
+- Tailwind v4 (via `@tailwindcss/vite`) — most styling is scoped component CSS for granular control
 
-## Type Support for `.vue` Imports in TS
+## Project structure
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+```
+src/
+  Pages/        Home, Browse, TitleDetail, MyList, Search, Profile, Login, Navbar
+  components/   Row, PosterCard
+  composables/  useAuth, useMyList
+  data/         titles.ts (12 fictional originals)
+  model/        title.ts (types)
+  router/       index.ts
+```
 
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Setup
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Type-Check, Compile and Minify for Production
+Build:
 
 ```sh
 npm run build
