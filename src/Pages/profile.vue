@@ -1,200 +1,248 @@
-<script  setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
-import { CircleUser } from 'lucide-vue-next'
+<script setup lang="ts">
+import { computed, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
+import { useMyList } from '@/composables/useMyList'
+import { titles } from '@/data/titles'
 
-const username = ref('')
-const theme = ref<'light' | 'dark'>('light')
-const profileImage = ref<string | null>(null)
-const loadingImage = ref(false)
+const router = useRouter()
+const { user, signOut } = useAuth()
+const { myList } = useMyList()
 
-const STORAGE_KEY = 'userProfile'
+if (!user.value) router.replace('/login')
 
-// LOAD DATA
-onMounted(() => {
-  const data = localStorage.getItem(STORAGE_KEY)
+const editing = ref(false)
+const draftName = ref(user.value?.name ?? '')
+const draftAvatar = ref(user.value?.avatar ?? '✦')
+const plan = ref<'Standard' | 'Premium' | 'Mobile'>(user.value?.plan ?? 'Premium')
 
-  if (data) {
-    const parsed = JSON.parse(data)
-    username.value = parsed.username || ''
-    theme.value = parsed.theme || 'light'
-    profileImage.value = parsed.profileImage || null
-  }
+watch(plan, (p) => { if (user.value) user.value.plan = p })
 
-  applyTheme()
-})
-// LOAD DATA
+const avatars = ['✦', '✺', '◐', '☾', '✿', '⚡', '♛', '☻']
 
-//APPLY & SAVE THEME CHANGE
-watch(theme, (newTheme) => {
-  applyTheme()
-  saveProfile()
-})
+const savedCount = computed(() => myList.value.length)
+const recentSaved = computed(() => titles.filter((t) => myList.value.includes(t.id)).slice(0, 4))
 
-const applyTheme = () => {
-  const html = document.documentElement
-  html.classList.toggle('dark', theme.value === 'dark')
+function save() {
+  if (!user.value) return
+  user.value.name = draftName.value.trim() || user.value.name
+  user.value.avatar = draftAvatar.value
+  editing.value = false
 }
-//APPLY & SAVE THEME CHANGE
-
-//SAVE PROFILE
-const saveProfile = () => {
-  localStorage.setItem(
-    STORAGE_KEY,
-    JSON.stringify({
-      username: username.value,
-      theme: theme.value,
-      profileImage: profileImage.value
-    })
-  )
-
-  //UPDATE NAVBAR
-  window.dispatchEvent(new Event('profileUpdated'))
-}
-//SAVE PROFILE
-
-//UPLOAD IMAGE
-const handleImageUpload = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (!file) return
-
-  if (file.size > 1024 * 1024) {
-    alert('Image must be less than 1MB')
-    return
-  }
-
-  loadingImage.value = true
-
-  const reader = new FileReader()
-  reader.onload = () => {
-    profileImage.value = reader.result as string
-    loadingImage.value = false
-  }
-
-  reader.readAsDataURL(file) 
-}
-//UPLOAD IMAGE
+function logout() { signOut(); router.push('/login') }
 </script>
 
 <template>
-  <div class="min-h-screen px-4 py-10
-              bg-gradient-to-b from-stone-200 to-stone-300
-              dark:from-gray-900 dark:to-gray-800 
-              transition-colors">
+  <main v-if="user" class="profile">
+    <section class="hero">
+      <div class="hero-bg" />
+      <div class="hero-content container-x">
+        <div class="avatar-xl">{{ user.avatar }}</div>
+        <div>
+          <span class="kicker">Aurora Profile</span>
+          <h1>{{ user.name }}</h1>
+          <p class="email">{{ user.email }}</p>
+          <div class="quick">
+            <span class="pill">{{ user.plan }} plan</span>
+            <span class="pill">{{ savedCount }} in My List</span>
+          </div>
+        </div>
+      </div>
+    </section>
 
-    <!-- CONTAINER -->
-    <div class="max-w-2xl mx-auto">
-
-      <!-- HEADER -->
-      <div class="mb-8">
-        <p class="text-3xl text-center text-gray-500 dark:text-white mt-1 mb-4">
-          Profile
-        </p>
+    <section class="container-x grid-cols">
+      <div class="card">
+        <div class="card-head">
+          <h2>Account</h2>
+          <button v-if="!editing" class="btn" @click="editing = true">Edit</button>
+        </div>
+        <div v-if="!editing" class="kv">
+          <div><span>Name</span><strong>{{ user.name }}</strong></div>
+          <div><span>Email</span><strong>{{ user.email }}</strong></div>
+          <div><span>Avatar</span><strong class="avatar-inline">{{ user.avatar }}</strong></div>
+        </div>
+        <div v-else class="form">
+          <label>Name <input v-model="draftName" /></label>
+          <label>Avatar</label>
+          <div class="avatar-pick">
+            <button
+              v-for="a in avatars"
+              :key="a"
+              class="ap"
+              :class="{ on: draftAvatar === a }"
+              @click="draftAvatar = a"
+            >{{ a }}</button>
+          </div>
+          <div class="form-actions">
+            <button class="btn" @click="editing = false">Cancel</button>
+            <button class="btn btn-primary" @click="save">Save</button>
+          </div>
+        </div>
       </div>
 
-      <!-- CARD -->
-      <div class="!bg-white dark:!bg-gray-800
-                  rounded-2xl shadow-md p-6 space-y-6">
-
-        <!-- PROFILE IMAGE -->
-        <div class="relative">
-          <div
-            v-if="loadingImage"
-            class="w-24 h-24 border-4 border-gray-300 border-t-blue-400
-                  rounded-full animate-spin"
-          ></div>
-
-          <img
-            v-else-if="profileImage"
-            :src="profileImage"
-            class="w-24 h-24 rounded-full object-cover shadow"
-          />
-
-          <div
-            v-else
-            class="w-24 h-24 rounded-full bg-gray-300 dark:bg-gray-700
-                  flex items-center justify-center shadow"
-          >
-            <CircleUser class="w-16 h-16 text-gray-500 dark:text-gray-300" />
-          </div>
-        </div>
-
-        <!-- UPLOAD PROFILE IMAGE -->
-        <div>
-          <label class="block text-sm text-gray-600 dark:text-gray-300 mb-2 mt-4">
-            Change Avatar
-          </label>
-          
-          <div><input 
-            type="file"
-            @change="handleImageUpload"
-            class="text-sm text-gray-600 dark:text-gray-300
-                    file:mr-3 file:px-3 file:py-1
-                    file:rounded-md file:border-0
-                    file:bg-blue-500 file:text-white
-                    hover:file:bg-blue-600 transition"
-            />
-          </div>
-        </div>
-
-        <!-- USERNAME -->
-        <div>
-          <label class="block mb-1 text-sm text-gray-600 dark:text-gray-300 mt-4">
-            Username
-          </label>
-          <input
-            v-model="username"
-            type="text"
-            class="w-full px-4 py-2 rounded-lg border
-                   bg-white dark:bg-gray-700
-                   text-gray-800 dark:text-white
-                   border-black dark:border-white
-                   focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-        
-        <!-- CONFIRM BUTTON -->
-        <div>
+      <div class="card">
+        <h2>Subscription</h2>
+        <p class="sub-note">Choose how you want to stream. Switch any time.</p>
+        <div class="plans">
           <button
-            @click="saveProfile"
-            class="btn btn-outline-primary px-4 mt-4 bg-white"
+            v-for="p in (['Mobile','Standard','Premium'] as const)"
+            :key="p"
+            class="plan"
+            :class="{ on: plan === p }"
+            @click="plan = p"
           >
-            Confirm Changes
+            <div class="plan-name">{{ p }}</div>
+            <div class="plan-tag">
+              {{ p === 'Mobile' ? 'Phone & tablet · SD' : p === 'Standard' ? 'All devices · Full HD' : 'All devices · 4K + HDR' }}
+            </div>
           </button>
         </div>
-
-        <!-- THEME -->
-        <div>
-          <label class="block mb-1 text-sm text-gray-600 dark:text-gray-300 mt-4">
-            Theme
-          </label>
-
-          <div class="flex gap-3">
-            <button
-              @click="theme = 'light'"
-              :class="[
-                'flex-1 py-2 rounded-lg border transition',
-                theme === 'light'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white dark:bg-gray-700 text-black dark:text-gray-300 border-gray-300 dark:border-gray-600'
-              ]"
-            >
-              ☀️ Light
-            </button>
-
-            <button
-              @click="theme = 'dark'"
-              :class="[
-                'flex-1 py-2 rounded-lg border transition',
-                theme === 'dark'
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white dark:bg-gray-700 text-gray-700 dark:text-black border-gray-300 dark:border-gray-600'
-              ]"
-            >
-              🌙 Dark
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
-  </div>
+
+      <div class="card full">
+        <h2>Recently saved</h2>
+        <div v-if="recentSaved.length" class="mini-row">
+          <button
+            v-for="t in recentSaved"
+            :key="t.id"
+            class="mini-card"
+            :style="{ background: `linear-gradient(135deg, ${t.gradient[0]}, ${t.gradient[1]}, ${t.gradient[2]})` }"
+            @click="router.push({ name: 'TitleDetail', params: { id: t.id } })"
+          >
+            <div class="mini-glyph">{{ t.glyph }}</div>
+            <div class="mini-name">{{ t.name }}</div>
+          </button>
+        </div>
+        <p v-else class="muted">Nothing saved yet. Add titles from the home page.</p>
+      </div>
+
+      <div class="card full danger">
+        <h2>Sign out</h2>
+        <p class="muted">You'll need to sign back in to access your list.</p>
+        <button class="btn" @click="logout">Sign out of Aurora</button>
+      </div>
+    </section>
+  </main>
 </template>
+
+<style scoped>
+.profile { padding-bottom: 80px; }
+.hero { position: relative; padding: 130px 0 50px; overflow: hidden; }
+.hero-bg {
+  position: absolute; inset: 0; z-index: -1;
+  background: radial-gradient(700px 400px at 20% 30%, rgba(255,78,205,0.25), transparent 60%),
+              radial-gradient(700px 400px at 80% 40%, rgba(62,224,255,0.18), transparent 60%);
+}
+.hero-content { display: flex; gap: 28px; align-items: center; }
+.avatar-xl {
+  width: 110px; height: 110px;
+  background: var(--aurora);
+  color: #0a0a14;
+  border-radius: 22px;
+  display: grid; place-items: center;
+  font-size: 3.5rem; font-weight: 900;
+  box-shadow: 0 20px 60px rgba(122,92,255,0.4);
+}
+.kicker {
+  font-size: 0.78rem; letter-spacing: 0.32em; font-weight: 700;
+  background: var(--aurora);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.hero h1 { font-size: clamp(2rem, 4vw, 3rem); margin: 6px 0 2px; font-weight: 900; }
+.email { color: var(--muted); margin: 0 0 12px; }
+.quick { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.grid-cols {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+  margin-top: 30px;
+}
+.card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 24px;
+}
+.card.full { grid-column: 1 / -1; }
+.card.danger { border-color: rgba(255,80,80,0.25); }
+.card h2 { margin: 0 0 14px; font-size: 1.15rem; font-weight: 800; }
+.card-head { display: flex; justify-content: space-between; align-items: center; }
+.kv { display: flex; flex-direction: column; gap: 10px; }
+.kv > div { display: flex; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; }
+.kv span { color: var(--muted); }
+.avatar-inline { font-size: 1.4rem; }
+
+.form { display: flex; flex-direction: column; gap: 12px; }
+.form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
+.form input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+}
+.avatar-pick { display: flex; gap: 8px; flex-wrap: wrap; }
+.ap {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  font-size: 1.3rem; color: #fff;
+}
+.ap.on { background: var(--aurora); color: #0a0a14; border: none; }
+.form-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+.sub-note { color: var(--muted); margin: 0 0 14px; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.plan {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  text-align: left;
+  padding: 14px;
+  border-radius: 12px;
+  color: #fff;
+}
+.plan.on {
+  border-color: transparent;
+  background: linear-gradient(180deg, rgba(255,78,205,0.18), rgba(62,224,255,0.12));
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.18) inset;
+}
+.plan-name { font-weight: 800; }
+.plan-tag { font-size: 0.78rem; color: var(--muted); margin-top: 4px; }
+
+.mini-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.mini-card {
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
+  text-align: left;
+  padding: 12px;
+  cursor: pointer;
+}
+.mini-glyph {
+  position: absolute; top: 6px; right: 12px;
+  font-size: 2.2rem; font-weight: 900; opacity: 0.6;
+}
+.mini-name {
+  position: absolute; bottom: 10px; left: 12px; right: 12px;
+  font-weight: 800;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.6);
+}
+
+.muted { color: var(--muted); }
+
+@media (max-width: 820px) {
+  .grid-cols { grid-template-columns: 1fr; }
+  .plans, .mini-row { grid-template-columns: 1fr 1fr; }
+}
+</style>
