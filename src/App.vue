@@ -31,7 +31,7 @@ const hideChrome = computed(() => route.name === 'Login')
 .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .footer { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.06); padding: 48px 24px; color: #8a8aa3; }
 .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
-.brand-mini { font-weight: 900; letter-spacing: 0.3em; background: linear-gradient(90deg,#ff4ecd,#7a5cff,#3ee0ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brand-mini { font-weight: 900; letter-spacing: 0.3em; color: var(--accent); }
 .links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.85rem; }
 .links a { cursor: pointer; }
 .links a:hover { color: #fff; }

@@ -18,7 +18,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: true,
     topTen: true,
-    gradient: ['#ff4ecd', '#7a5cff', '#3ee0ff'],
+    color: '#5B5BD6',
     glyph: 'N',
   },
   {
@@ -38,7 +38,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: false,
     topTen: true,
-    gradient: ['#f59e0b', '#ef4444', '#7c2d12'],
+    color: '#E54D2E',
     glyph: 'P',
   },
   {
@@ -58,7 +58,7 @@ export const titles: Title[] = [
     trending: false,
     newArrival: true,
     topTen: true,
-    gradient: ['#0ea5e9', '#1e3a8a', '#020617'],
+    color: '#0EA5E9',
     glyph: 'S',
   },
   {
@@ -78,7 +78,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: false,
     topTen: false,
-    gradient: ['#be185d', '#581c87', '#0c0a09'],
+    color: '#BE185D',
     glyph: 'V',
   },
   {
@@ -98,7 +98,7 @@ export const titles: Title[] = [
     trending: false,
     newArrival: false,
     topTen: false,
-    gradient: ['#fb7185', '#f97316', '#fde047'],
+    color: '#F43F5E',
     glyph: 'L',
   },
   {
@@ -118,13 +118,13 @@ export const titles: Title[] = [
     trending: true,
     newArrival: true,
     topTen: true,
-    gradient: ['#22d3ee', '#0f766e', '#0a0a14'],
+    color: '#0D9488',
     glyph: 'M',
   },
   {
     id: 'hollowfield',
     name: 'Hollowfield',
-    tagline: 'The town isn\'t on any map for a reason.',
+    tagline: "The town isn't on any map for a reason.",
     synopsis:
       'A journalist returns to her childhood town to write a puff piece on its centennial. The town has other plans.',
     kind: 'movie',
@@ -138,7 +138,7 @@ export const titles: Title[] = [
     trending: false,
     newArrival: true,
     topTen: false,
-    gradient: ['#1f2937', '#7f1d1d', '#0a0a14'],
+    color: '#374151',
     glyph: 'H',
   },
   {
@@ -158,7 +158,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: false,
     topTen: true,
-    gradient: ['#84cc16', '#15803d', '#052e16'],
+    color: '#16A34A',
     glyph: 'K',
   },
   {
@@ -166,7 +166,7 @@ export const titles: Title[] = [
     name: 'After the Monsoon',
     tagline: 'Family heals slower than the storm.',
     synopsis:
-      'Three estranged siblings return to their late father\'s plantation in West Sumatra and discover the inheritance is more than they bargained for — emotionally and legally.',
+      "Three estranged siblings return to their late father's plantation in West Sumatra and discover the inheritance is more than they bargained for — emotionally and legally.",
     kind: 'movie',
     year: 2024,
     rating: 'PG',
@@ -178,7 +178,7 @@ export const titles: Title[] = [
     trending: false,
     newArrival: false,
     topTen: false,
-    gradient: ['#0891b2', '#065f46', '#022c22'],
+    color: '#0891B2',
     glyph: 'A',
   },
   {
@@ -198,7 +198,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: true,
     topTen: true,
-    gradient: ['#a855f7', '#06b6d4', '#1e293b'],
+    color: '#9333EA',
     glyph: 'G',
   },
   {
@@ -218,7 +218,7 @@ export const titles: Title[] = [
     trending: false,
     newArrival: false,
     topTen: false,
-    gradient: ['#475569', '#1e40af', '#020617'],
+    color: '#1D4ED8',
     glyph: 'L',
   },
   {
@@ -238,7 +238,7 @@ export const titles: Title[] = [
     trending: true,
     newArrival: false,
     topTen: false,
-    gradient: ['#f9a8d4', '#a78bfa', '#5b21b6'],
+    color: '#7C3AED',
     glyph: 'S',
   },
 ]

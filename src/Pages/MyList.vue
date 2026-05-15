@@ -43,8 +43,7 @@ const items = computed(() => titles.filter((t) => myList.value.includes(t.id)))
 }
 .empty-glyph {
   font-size: 4rem;
-  background: var(--aurora);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  color: var(--accent);
 }
 .empty h2 { margin: 0; }
 .empty p { color: var(--muted); margin: 0 0 18px; }

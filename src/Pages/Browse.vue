@@ -75,7 +75,7 @@ const filtered = computed(() => {
 .filters {
   display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
   padding-bottom: 18px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid var(--border);
   margin-bottom: 28px;
 }
 .chips { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -89,9 +89,9 @@ const filtered = computed(() => {
 }
 .chip:hover { color: #fff; background: rgba(255,255,255,0.1); }
 .chip.active {
-  background: var(--aurora);
-  color: #0a0a14;
-  border: none;
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
   font-weight: 700;
 }
 .sort {
