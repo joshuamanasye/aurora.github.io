@@ -33,10 +33,9 @@ function openHero() {
 
 <template>
   <main>
-    <section class="hero" :style="{ '--hero-color': hero.color }">
+    <section class="hero" :style="{ backgroundImage: `url(${hero.banner})` }">
       <div class="hero-overlay" />
       <div class="hero-content container-x">
-        <span class="kicker">★ Aurora Original</span>
         <h1 class="hero-title">{{ hero.name }}</h1>
         <p class="hero-tag">{{ hero.tagline }}</p>
         <div class="hero-meta">
@@ -83,9 +82,12 @@ function openHero() {
   display: flex;
   align-items: flex-end;
   padding: 96px 0 80px;
-  background: var(--hero-color);
-  transition: background 0.8s ease;
   overflow: hidden;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  
+  transition: background-image 0.5s ease-in-out;
 }
 .hero-overlay {
   position: absolute;
@@ -96,14 +98,6 @@ function openHero() {
 }
 .hero-content { position: relative; max-width: 720px; }
 
-.kicker {
-  display: inline-block;
-  font-size: 0.78rem;
-  letter-spacing: 0.32em;
-  font-weight: 700;
-  color: var(--accent);
-  margin-bottom: 14px;
-}
 .hero-title {
   font-size: clamp(2.6rem, 6vw, 5rem);
   font-weight: 900;

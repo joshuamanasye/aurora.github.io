@@ -19,8 +19,12 @@ function onAdd(e: MouseEvent) {
 <template>
   <div class="poster" :class="{ ranked: rank != null }" @click="open">
     <span v-if="rank != null" class="rank-num">{{ rank }}</span>
+    
     <div class="art" :style="{ background: title.color }">
+      <img :src="title.image" :alt="title.name" class="poster-img" />
+
       <div class="glyph">{{ title.glyph }}</div>
+      
       <div class="overlay">
         <div class="meta-top">
           <span class="match">{{ title.match }}% Match</span>
@@ -53,6 +57,20 @@ function onAdd(e: MouseEvent) {
 }
 .poster:hover { transform: translateY(-6px) scale(1.04); z-index: 5; }
 .poster.ranked { width: 280px; padding-left: 70px; }
+
+.poster-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1; /* Places the artwork over the fallback glyph color */
+}
+
+/* Ensure the overlay text stacks on top of the new image */
+.overlay {
+  z-index: 2; 
+}
 
 .rank-num {
   position: absolute;

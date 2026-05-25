@@ -27,7 +27,9 @@ function scroll(dir: 1 | -1) {
             :key="t.id"
             :title="t"
             :rank="ranked ? i + 1 : undefined"
+            
           />
+          
         </div>
       </div>
       <button class="nav right" @click="scroll(1)" aria-label="scroll right">›</button>

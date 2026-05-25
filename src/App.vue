@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
-import Navbar from './Pages/Navbar.vue'
+import Navbar from './Pages/navbar.vue'
 
 const route = useRoute()
 const hideChrome = computed(() => route.name === 'Login')
