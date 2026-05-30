@@ -29,7 +29,10 @@ const suggested = computed(() => titles.filter((t) => t.topTen).slice(0, 6))
 <template>
   <main class="search">
     <div class="search-bar container-x">
-      <span class="ico">🔍</span>
+      <svg class="ico" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
       <input
         ref="inputEl"
         v-model="query"
@@ -70,7 +73,7 @@ const suggested = computed(() => titles.filter((t) => t.topTen).slice(0, 6))
   flex: 1; background: transparent; border: none; outline: none;
   color: #fff; font-size: 1.05rem;
 }
-.ico { font-size: 1.1rem; }
+.ico { width: 20px; height: 20px; color: var(--muted); flex-shrink: 0; }
 .clear {
   background: rgba(255,255,255,0.08); border: none; color: #fff;
   width: 28px; height: 28px; border-radius: 50%;

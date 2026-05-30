@@ -13,12 +13,9 @@ if (!user.value) router.replace('/login')
 
 const editing = ref(false)
 const draftName = ref(user.value?.name ?? '')
-const draftAvatar = ref(user.value?.avatar ?? '✦')
 const plan = ref<'Standard' | 'Premium' | 'Mobile'>(user.value?.plan ?? 'Premium')
 
 watch(plan, (p) => { if (user.value) user.value.plan = p })
-
-const avatars = ['✦', '✺', '◐', '☾', '✿', '⚡', '♛', '☻']
 
 const savedCount = computed(() => myList.value.length)
 const recentSaved = computed(() => titles.filter((t) => myList.value.includes(t.id)).slice(0, 4))
@@ -26,10 +23,29 @@ const recentSaved = computed(() => titles.filter((t) => myList.value.includes(t.
 function save() {
   if (!user.value) return
   user.value.name = draftName.value.trim() || user.value.name
-  user.value.avatar = draftAvatar.value
   editing.value = false
 }
 function logout() { signOut(); router.push('/login') }
+
+// Profile picture
+const PLACEHOLDER = 'https://www.gravatar.com/avatar/?d=mp&s=110'
+const fileInput = ref<HTMLInputElement | null>(null)
+
+function triggerUpload() { fileInput.value?.click() }
+
+function onFileChange(e: Event) {
+  const file = (e.target as HTMLInputElement).files?.[0]
+  if (!file || !user.value) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    if (user.value) user.value.profilePic = reader.result as string
+  }
+  reader.readAsDataURL(file)
+}
+
+function removeProfilePic() {
+  if (user.value) user.value.profilePic = undefined
+}
 </script>
 
 <template>
@@ -37,7 +53,17 @@ function logout() { signOut(); router.push('/login') }
     <section class="hero">
       <div class="hero-stripe" />
       <div class="hero-content container-x">
-        <div class="avatar-xl">{{ user.avatar }}</div>
+        <div class="avatar-xl avatar-edit" @click="triggerUpload" title="Change photo">
+          <img :src="user.profilePic || PLACEHOLDER" class="avatar-pic" alt="profile photo" />
+          <div class="avatar-edit-overlay">
+            <!-- Camera icon (Heroicons / MIT) -->
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2"/>
+            </svg>
+          </div>
+          <input ref="fileInput" type="file" accept="image/*" class="hidden-input" @change="onFileChange" />
+        </div>
         <div>
           <span class="kicker">Aurora Profile</span>
           <h1>{{ user.name }}</h1>
@@ -46,6 +72,7 @@ function logout() { signOut(); router.push('/login') }
             <span class="pill">{{ user.plan }} plan</span>
             <span class="pill">{{ savedCount }} in My List</span>
           </div>
+          <button v-if="user.profilePic" class="remove-pic" @click="removeProfilePic">Remove photo</button>
         </div>
       </div>
     </section>
@@ -59,20 +86,9 @@ function logout() { signOut(); router.push('/login') }
         <div v-if="!editing" class="kv">
           <div><span>Name</span><strong>{{ user.name }}</strong></div>
           <div><span>Email</span><strong>{{ user.email }}</strong></div>
-          <div><span>Avatar</span><strong class="avatar-inline">{{ user.avatar }}</strong></div>
         </div>
         <div v-else class="form">
           <label>Name <input v-model="draftName" /></label>
-          <label>Avatar</label>
-          <div class="avatar-pick">
-            <button
-              v-for="a in avatars"
-              :key="a"
-              class="ap"
-              :class="{ on: draftAvatar === a }"
-              @click="draftAvatar = a"
-            >{{ a }}</button>
-          </div>
           <div class="form-actions">
             <button class="btn" @click="editing = false">Cancel</button>
             <button class="btn btn-primary" @click="save">Save</button>
@@ -106,10 +122,10 @@ function logout() { signOut(); router.push('/login') }
             v-for="t in recentSaved"
             :key="t.id"
             class="mini-card"
-            :style="{ background: t.color }"
+            :style="t.image ? { backgroundImage: `url(${t.image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : { background: t.color }"
             @click="router.push({ name: 'TitleDetail', params: { id: t.id } })"
           >
-            <div class="mini-glyph">{{ t.glyph }}</div>
+            <div class="mini-overlay" />
             <div class="mini-name">{{ t.name }}</div>
           </button>
         </div>
@@ -132,19 +148,39 @@ function logout() { signOut(); router.push('/login') }
 .hero-stripe {
   position: absolute; left: 0; right: 0; bottom: 0; top: 0;
   background: var(--surface);
-  clip-path: polygon(0 40%, 100% 60%, 100% 100%, 0 100%);
 }
 .hero-content { position: relative; display: flex; gap: 28px; align-items: center; }
 
 .avatar-xl {
   width: 110px; height: 110px;
-  background: var(--accent);
-  color: #fff;
   border-radius: 16px;
-  display: grid; place-items: center;
-  font-size: 3.5rem; font-weight: 900;
+  overflow: hidden;
   box-shadow: 0 8px 32px rgba(91, 91, 214, 0.35);
+  position: relative; flex-shrink: 0;
 }
+.avatar-edit { cursor: pointer; }
+.avatar-pic { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-edit-overlay {
+  position: absolute; inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: grid; place-items: center;
+  opacity: 0; transition: opacity 0.2s;
+  color: #fff;
+}
+.avatar-edit-overlay svg { width: 28px; height: 28px; }
+.avatar-edit:hover .avatar-edit-overlay { opacity: 1; }
+.hidden-input { display: none; }
+.remove-pic {
+  margin-top: 8px;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+.remove-pic:hover { color: #fff; }
 .kicker {
   font-size: 0.78rem; letter-spacing: 0.32em; font-weight: 700;
   color: var(--accent);
@@ -181,7 +217,6 @@ function logout() { signOut(); router.push('/login') }
   border-bottom: 1px solid var(--border); padding-bottom: 10px;
 }
 .kv span { color: var(--muted); }
-.avatar-inline { font-size: 1.4rem; }
 
 .form { display: flex; flex-direction: column; gap: 12px; }
 .form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--muted); }
@@ -195,15 +230,6 @@ function logout() { signOut(); router.push('/login') }
   outline: none;
 }
 .form input:focus { border-color: var(--accent); }
-.avatar-pick { display: flex; gap: 8px; flex-wrap: wrap; }
-.ap {
-  width: 44px; height: 44px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-size: 1.3rem; color: #fff;
-}
-.ap.on { background: var(--accent); color: #fff; border-color: var(--accent); }
 .form-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
 .sub-note { color: var(--muted); margin: 0 0 14px; font-size: 0.9rem; }
@@ -223,7 +249,7 @@ function logout() { signOut(); router.push('/login') }
 
 .mini-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
 .mini-card {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 2 / 3;
   border-radius: 10px;
   border: none;
   position: relative;
@@ -233,9 +259,9 @@ function logout() { signOut(); router.push('/login') }
   padding: 12px;
   cursor: pointer;
 }
-.mini-glyph {
-  position: absolute; top: 6px; right: 10px;
-  font-size: 2.2rem; font-weight: 900; opacity: 0.2;
+.mini-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%);
 }
 .mini-name {
   position: absolute; bottom: 10px; left: 12px; right: 12px;

@@ -5,8 +5,8 @@ const STORAGE_KEY = 'aurora.user'
 export interface AuroraUser {
   name: string
   email: string
-  avatar: string // emoji / glyph
   plan: 'Standard' | 'Premium' | 'Mobile'
+  profilePic?: string // base64 data URL
 }
 
 function load(): AuroraUser | null {
@@ -23,7 +23,7 @@ const user = ref<AuroraUser | null>(load())
 watch(user, (val) => {
   if (val) localStorage.setItem(STORAGE_KEY, JSON.stringify(val))
   else localStorage.removeItem(STORAGE_KEY)
-})
+}, { deep: true })
 
 export function useAuth() {
   function signIn(email: string) {
@@ -31,7 +31,6 @@ export function useAuth() {
     user.value = {
       name: name.charAt(0).toUpperCase() + name.slice(1),
       email,
-      avatar: '✦',
       plan: 'Premium',
     }
   }

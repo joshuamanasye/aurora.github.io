@@ -3,6 +3,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, RouterLink } from 'vue-router'
 import { useAuth } from '@/composables/useAuth'
 
+const DEFAULT_AVATAR = 'https://www.gravatar.com/avatar/?d=mp&s=80'
+
 const scrolled = ref(false)
 const menuOpen = ref(false)
 const router = useRouter()
@@ -24,7 +26,7 @@ function logout() {
   <header class="nav" :class="{ scrolled }">
     <div class="nav-inner container-x">
       <RouterLink to="/" class="brand">
-        <span class="brand-mark">✦</span>
+        <i class="fa-solid fa-tv brand-icon" aria-hidden="true"></i>
         <span class="brand-text">AURORA</span>
       </RouterLink>
 
@@ -37,15 +39,23 @@ function logout() {
       </nav>
 
       <div class="actions">
-        <button class="icon-btn" @click="goSearch" aria-label="search">🔍</button>
+        <button class="icon-btn" @click="goSearch" aria-label="search">
+          <!-- Search icon (Heroicons / MIT) -->
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+            <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
         <template v-if="user">
           <button class="avatar" @click="menuOpen = !menuOpen">
-            <span>{{ user.avatar }}</span>
+            <img :src="user.profilePic || DEFAULT_AVATAR" class="avatar-img" alt="profile" />
           </button>
           <div v-if="menuOpen" class="menu" @click.self="menuOpen = false">
             <div class="menu-panel">
               <div class="menu-user">
-                <div class="menu-avatar">{{ user.avatar }}</div>
+                <div class="menu-avatar">
+                  <img :src="user.profilePic || DEFAULT_AVATAR" class="avatar-img" alt="profile" />
+                </div>
                 <div>
                   <div class="menu-name">{{ user.name }}</div>
                   <div class="menu-plan">{{ user.plan }} plan</div>
@@ -78,9 +88,10 @@ function logout() {
   padding: 14px 24px;
 }
 .brand { display: flex; align-items: center; gap: 8px; }
-.brand-mark {
+.brand-icon {
   font-size: 1.4rem;
   color: var(--accent);
+  flex-shrink: 0;
 }
 .brand-text {
   font-weight: 900;
@@ -99,8 +110,10 @@ function logout() {
 .primary a.active { color: #fff; font-weight: 700; }
 .actions { margin-left: auto; display: flex; align-items: center; gap: 14px; position: relative; }
 .icon-btn {
-  background: transparent; border: none; color: #fff; font-size: 1.05rem; padding: 6px;
+  background: transparent; border: none; color: #fff;
+  padding: 6px; display: grid; place-items: center;
 }
+.icon-btn svg { width: 20px; height: 20px; }
 .avatar {
   width: 36px; height: 36px;
   border-radius: 8px;
@@ -109,7 +122,9 @@ function logout() {
   color: #fff;
   font-weight: 900;
   display: grid; place-items: center;
+  overflow: hidden;
 }
+.avatar-img { width: 100%; height: 100%; object-fit: cover; }
 .signin { padding: 8px 18px; font-size: 0.85rem; border-radius: 8px; }
 .menu { position: absolute; right: 0; top: 50px; z-index: 60; }
 .menu-panel {
@@ -142,6 +157,7 @@ function logout() {
   width: 36px; height: 36px; border-radius: 8px;
   background: var(--accent); color: #fff; font-weight: 900;
   display: grid; place-items: center;
+  overflow: hidden; flex-shrink: 0;
 }
 .menu-name { font-weight: 700; color: #fff; }
 .menu-plan { font-size: 0.75rem; color: var(--muted); }

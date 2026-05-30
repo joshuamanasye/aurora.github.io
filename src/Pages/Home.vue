@@ -66,7 +66,7 @@ function openHero() {
     </section>
 
     <div class="rows">
-      <Row heading="🔥 Trending Now" :titles="trending" />
+      <Row heading="Trending Now" :titles="trending" />
       <Row heading="Top 10 in Aurora Today" :titles="topTen" ranked />
       <Row heading="New &amp; Noteworthy" :titles="newReleases" />
       <Row heading="Films We Love" :titles="moviesOnly" />
