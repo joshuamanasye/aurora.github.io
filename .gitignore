@@ -288,6 +288,9 @@ FakesAssemblies/
 .ntvs_analysis.dat
 node_modules/
 
+# Claude Code worktrees
+.claude/worktrees/
+
 # Visual Studio 6 build log
 *.plg
 
