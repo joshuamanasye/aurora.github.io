@@ -5,8 +5,8 @@ import Browse from '@/Pages/Browse.vue'
 import TitleDetail from '@/Pages/TitleDetail.vue'
 import MyList from '@/Pages/MyList.vue'
 import Search from '@/Pages/Search.vue'
-import Profile from '@/Pages/Profile.vue'
-import Login from '@/Pages/Login.vue'
+import Profile from '@/Pages/profile.vue'
+import Login from '@/Pages/login.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
